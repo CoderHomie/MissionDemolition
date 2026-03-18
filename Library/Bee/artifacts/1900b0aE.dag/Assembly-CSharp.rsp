@@ -346,10 +346,14 @@
 "Assets/Scenes/__Scripts/CloudCover.cs"
 "Assets/Scenes/__Scripts/FollowCam.cs"
 "Assets/Scenes/__Scripts/Goal.cs"
+"Assets/Scenes/__Scripts/MissionDemolition.cs"
 "Assets/Scenes/__Scripts/Projectile.cs"
 "Assets/Scenes/__Scripts/ProjectileLine.cs"
 "Assets/Scenes/__Scripts/RigidbodySleep.cs"
 "Assets/Scenes/__Scripts/Slingshot.cs"
+"Assets/Scenes/__Scripts/SlingshotRubberBand.cs"
+"Assets/Scenes/__Scripts/SlingshotSFX.cs"
+"Assets/Scenes/__Scripts/UIManager.cs"
 -langversion:9.0
 
 /deterministic

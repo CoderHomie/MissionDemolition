@@ -9,6 +9,9 @@ public class Slingshot : MonoBehaviour
     public GameObject projectilePrefab;
     public float velocityMult = 10f;
     public GameObject projLinePrefab;
+    public MissionDemolition missionDemolition;
+    public SlingshotRubberBand rubberBand;
+    public SlingshotSFX sfx;
 
     // fields set dynamically
     [Header("Dynamic")]
@@ -23,6 +26,10 @@ public class Slingshot : MonoBehaviour
         launchPoint = launchPointTrans.gameObject;
         launchPoint.SetActive(false);
         launchPos = launchPointTrans.position;
+
+        if (missionDemolition == null) missionDemolition = FindFirstObjectByType<MissionDemolition>();
+        if (rubberBand == null) rubberBand = GetComponent<SlingshotRubberBand>();
+        if (sfx == null) sfx = GetComponent<SlingshotSFX>();
     }
 
     void OnMouseEnter()
@@ -39,6 +46,9 @@ public class Slingshot : MonoBehaviour
 
     void OnMouseDown()
     {
+        if (missionDemolition != null && missionDemolition.gameOver) return;
+        if (missionDemolition != null && missionDemolition.won) return;
+
         // The player has pressed the mouse button while over Slingshot
         aimingMode = true;
         // Instantiate a Projectile
@@ -47,12 +57,22 @@ public class Slingshot : MonoBehaviour
         projectile.transform.position = launchPos;
         // Set it to isKinematic for now
         projectile.GetComponent<Rigidbody>().isKinematic = true;
+
+        if (rubberBand != null) rubberBand.BeginAiming(projectile.transform);
     }
 
     void Update()
     {
         // If Slingshot is not in aimingMode, don't run this code
         if (!aimingMode) return;
+
+        // If the game ends while aiming, cleanly stop aiming.
+        if (missionDemolition != null && (missionDemolition.gameOver || missionDemolition.won))
+        {
+            aimingMode = false;
+            if (rubberBand != null) rubberBand.EndAiming();
+            return;
+        }
 
         // Get the current mouse position in 2D screen coordinates
         Vector3 mousePos2D = Input.mousePosition;
@@ -88,6 +108,10 @@ public class Slingshot : MonoBehaviour
             FollowCam.POI = projectile; // Set the __MainCamera POI
             // Add a ProjectLine to the Projectile
             Instantiate<GameObject>(projLinePrefab, projectile.transform);
+
+            if (rubberBand != null) rubberBand.EndAiming();
+            if (sfx != null) sfx.PlaySnap();
+            if (missionDemolition != null) missionDemolition.ShotFired();
             projectile = null;
         }
     }
